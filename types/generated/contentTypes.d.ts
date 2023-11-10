@@ -362,38 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiClassroomClassroom extends Schema.CollectionType {
-  collectionName: 'classrooms';
-  info: {
-    singularName: 'classroom';
-    pluralName: 'classrooms';
-    displayName: 'Classroom';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    name: Attribute.String;
-    description: Attribute.Text;
-    maxStudents: Attribute.Integer;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::classroom.classroom',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::classroom.classroom',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -709,6 +677,114 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiClassroomClassroom extends Schema.CollectionType {
+  collectionName: 'classrooms';
+  info: {
+    singularName: 'classroom';
+    pluralName: 'classrooms';
+    displayName: 'Classroom';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String;
+    description: Attribute.Text;
+    maxStudents: Attribute.Integer;
+    tutorials: Attribute.Relation<
+      'api::classroom.classroom',
+      'oneToMany',
+      'api::tutorial.tutorial'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::classroom.classroom',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::classroom.classroom',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInfoInfo extends Schema.SingleType {
+  collectionName: 'infos';
+  info: {
+    singularName: 'info';
+    pluralName: 'infos';
+    displayName: 'Info';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Name: Attribute.String;
+    Description: Attribute.Text;
+    Version: Attribute.String;
+    developers: Attribute.Component<'information.developer', true>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::info.info', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::info.info', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiTutorialTutorial extends Schema.CollectionType {
+  collectionName: 'tutorials';
+  info: {
+    singularName: 'tutorial';
+    pluralName: 'tutorials';
+    displayName: 'Tutorial';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 5;
+      }>;
+    slug: Attribute.String & Attribute.Required & Attribute.Unique;
+    type: Attribute.Enumeration<['video', 'text']> &
+      Attribute.DefaultTo<'video'>;
+    url: Attribute.String;
+    contents: Attribute.Text;
+    classroom: Attribute.Relation<
+      'api::tutorial.tutorial',
+      'manyToOne',
+      'api::classroom.classroom'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::tutorial.tutorial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::tutorial.tutorial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -719,13 +795,15 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::classroom.classroom': ApiClassroomClassroom;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::classroom.classroom': ApiClassroomClassroom;
+      'api::info.info': ApiInfoInfo;
+      'api::tutorial.tutorial': ApiTutorialTutorial;
     }
   }
 }
