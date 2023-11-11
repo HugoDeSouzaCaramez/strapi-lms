@@ -767,6 +767,7 @@ export interface ApiTutorialTutorial extends Schema.CollectionType {
       'manyToOne',
       'api::classroom.classroom'
     >;
+    coverImage: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
